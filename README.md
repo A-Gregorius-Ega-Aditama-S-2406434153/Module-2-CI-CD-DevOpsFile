@@ -58,20 +58,34 @@ your reflection inside the repository's README.md file.
 
 ## Answer reflection 2:
 ```text
-1. After writing the unit tests, I feel more confident about the correctness of the core logic, but I still
-stay cautious because tests can miss edge cases. There is no fixed number of unit tests per class; the right
-amount is enough to cover important behaviors, branches, and edge cases without becoming redundant or too
-tightly coupled to implementation details. To make sure tests are enough, I focus on critical paths, boundary
-conditions, and error handling, and I use code coverage as a guide to see which lines and branches are not
-exercised. However, 100% coverage does not mean the program has no bugs. Coverage only shows that code ran,
-not that assertions were correct or that all scenarios were tested. Bugs can still exist due to missing
-assertions, wrong expectations, concurrency issues, or integration problems.
+1. Unit testing confidence, coverage, and limitations
 
-2. Creating another functional test suite with the same setup and instance variables can introduce code
-duplication and reduce clarity. Repeating driver setup, base URL construction, and helper methods can lead
-to copy-paste code, scattered updates, and inconsistent behavior between tests. This hurts cleanliness by
-violating DRY (Dont Repeat Yourself) and makes maintenance harder. To improve this, I can extract shared
-setup and utilities into a base class or a JUnit 5 extension, and use common helper methods for waits and
-URL creation. Another improvement is the Page Object Model to centralize element locators and actions so
-tests are shorter, more readable, and more resilient to UI changes.
+After writing unit tests, I feel more confident about the correctness of the core logic because tests help
+verify expected behavior under controlled conditions. However, I still remain cautious, since unit tests can
+never prove the absence of bugs they only reduce uncertainty. There is no fixed or “correct” number of unit
+tests per class; instead, the goal is to have sufficient tests that cover important behaviors, decision branches,
+and edge cases without becoming redundant or overly coupled to internal implementation details. To judge
+whether tests are sufficient, I focus on critical execution paths, boundary conditions  and error handling
+scenarios. I also use code coverage tools as a guideline to identify which lines and branches have not been exercised.
+That said, coverage metrics must be interpreted carefully: achieving 100% coverage does not guarantee the
+program is bug free. Coverage only indicates that code was executed during tests, not that the assertions
+were meaningful or correct. Bugs may still exist due to missing or weak assertions, incorrect assumptions
+in test expectations, race conditions in concurrent code, or issues that only appear when
+components interact in real environments. Because of this, unit testing should be complemented
+with other testing levels such as integration tests, system tests, and exploratory testing, especially
+for complex logic or state-dependent behavior.
+
+2. Test duplication, maintainability, and test design improvements Creating another functional test suite with the
+same setup logic and instance variables can easily introduce code duplication and reduce clarity. Repeating driver
+initialization, base URL construction, timeouts, and helper utilities often leads to copy-paste code, which makes changes
+error prone and increases the risk of inconsistent behavior across test classes. This negatively impacts code cleanliness by
+violating the DRY (Don’t Repeat Yourself) principle and makes long-term maintenance harder.A better approach is to extract
+shared setup and teardown logic into a base test class or a reusable JUnit 5 extension, allowing common configuration to be
+defined in one place. Shared helper methods for example, for waiting strategies, navigation, or URL construction can
+further improve consistency and readability. This also makes updates easier, since changes only need to be applied
+once instead of across multiple test files. Another important improvement is applying the Page Object Model (POM).
+By centralizing UI element locators and user interactions into dedicated page classes, test casesbecome shorter,
+more expressive, and easier to understand. This separation of concerns makes tests more resilient to UI changes,
+ince updates to element selectors or interaction logic are confined to page objects rather than scattered throughout test code.
+Overall, these practices lead to cleaner, more maintainable, and more scalable test suites.
 ```
