@@ -70,7 +70,7 @@ class HomePageFunctionalTest {
 
         // Verify
         wait.until(ExpectedConditions.urlContains("/product/list"));
-        assertEquals("Product List", pageTitle);
+        assertEquals("ADV Shop", pageTitle);
     }
 
     @Test
@@ -81,7 +81,18 @@ class HomePageFunctionalTest {
         String headerText = driver.findElement(By.tagName("h2")).getText();
 
         // Verify
-        assertEquals("Product' List", headerText);
+        assertEquals("Product List", headerText);
+    }
+
+    @Test
+    void welcomeMessage_homePage_isCorrect() {
+        // Exercise
+        driver.get(baseUrl);
+        wait.until(ExpectedConditions.urlContains("/product/list"));
+        String welcomeText = driver.findElement(By.tagName("h3")).getText();
+
+        // Verify
+        assertEquals("Welcome", welcomeText);
     }
 
 }
