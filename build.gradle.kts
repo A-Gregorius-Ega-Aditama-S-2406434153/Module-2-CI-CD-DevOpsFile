@@ -90,3 +90,17 @@ tasks.jacocoTestReport {
         html.required.set(true)
     }
 }
+
+tasks.register<JacocoReport>("jacocoUnitTestReport") {
+    description = "Generates Jacoco coverage report for unit tests."
+    group = "verification"
+    dependsOn(tasks.named("unitTest"))
+
+    executionData.setFrom(fileTree(buildDir).include("jacoco/unitTest.exec"))
+    sourceSets(sourceSets["main"])
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
