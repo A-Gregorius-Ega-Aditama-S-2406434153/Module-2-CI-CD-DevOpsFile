@@ -100,6 +100,17 @@ class ProductServiceImplTest {
     }
 
     @Test
+    void testUpdateReturnsNullWhenMissing() {
+        Product product = buildProduct("missing-id", "Sampo E", 1);
+        when(productRepository.update(product)).thenReturn(null);
+
+        Product updatedProduct = productService.update(product);
+
+        assertNull(updatedProduct);
+        verify(productRepository).update(product);
+    }
+
+    @Test
     void testDeleteByIdReturnsTrue() {
         when(productRepository.deleteById("id-5")).thenReturn(true);
 
