@@ -32,7 +32,7 @@ class ProductControllerTest {
 
         String viewName = productController.createProductPage(model);
 
-        assertEquals("createProduct", viewName);
+        assertEquals("CreateProduct", viewName);
         assertTrue(model.containsAttribute("product"));
         assertNotNull(model.getAttribute("product"));
     }
