@@ -65,13 +65,11 @@ val githubRepositoryProvider = providers.environmentVariable("GITHUB_REPOSITORY"
 
 val sonarProjectKeyProvider = providers.gradleProperty("sonarProjectKey")
     .orElse(providers.environmentVariable("SONAR_PROJECT_KEY"))
-    .orElse(githubRepositoryProvider.map { it.replace("/", "_") })
-    .orElse("undefined_project_key")
+    .orElse("A-Gregorius-Ega-Aditama-S-2406434153_Module-2-CI-CD-DevOpsFile")
 
 val sonarOrganizationProvider = providers.gradleProperty("sonarOrganization")
     .orElse(providers.environmentVariable("SONAR_ORGANIZATION"))
-    .orElse(githubRepositoryProvider.map { it.substringBefore("/") })
-    .orElse("undefined_org")
+    .orElse("a-gregorius-ega-aditama-s-2406434153")
 
 val sonarTokenProvider = providers.gradleProperty("sonarToken")
     .orElse(providers.environmentVariable("SONAR_TOKEN"))
