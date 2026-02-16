@@ -3,3 +3,18 @@
 Verifying dependencies for project eshop
 Checking for updates and analyzing dependencies for vulnerabilities
 An NVD API Key was not provided - it is highly recommended to use an NVD API key as the update can take a VERY long time without an API Key
+Java vector incubator module is not readable. For optimal vector performance, pass '--add-modules jdk.incubator.vector' to enable Vector API.
+Disabling OSS Index analyzer due to missing user/password credentials. Authentication is now required: https://ossindex.sonatype.org/doc/auth-required
+Generating report for project eshop
+Found 0 vulnerabilities in project eshop
+
+[Incubating] Problems report is available at: file:///D:/intelije/code/adpro/modul/modul%202/Module-2-CI-CD-DevOpsFile/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2h 34m 41s
+1 actionable task: 1 executed

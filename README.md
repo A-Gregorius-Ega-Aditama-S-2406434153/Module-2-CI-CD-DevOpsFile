@@ -89,3 +89,38 @@ more expressive, and easier to understand. This separation of concerns makes tes
 ince updates to element selectors or interaction logic are confined to page objects rather than scattered throughout test code.
 Overall, these practices lead to cleaner, more maintainable, and more scalable test suites.
 ```
+
+## Reflection 3:
+```text
+1. List the code quality issue(s) that you fixed during the exercise and explain your strategy
+on fixing them.
+2. Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current
+implementation has met the definition of Continuous Integration and Continuous
+Deployment? Explain the reasons (minimum 3 sentences)!
+```
+
+## Answer reflection 3:
+```text
+1. Code quality issues fixed and strategy
+
+During this exercise, I fixed several code quality and security-related issues identified by static analysis and workflow review. 
+First, I resolved an unused field issue in HomePageFunctionalTest by using WebDriverWait with ExpectedConditions, so the test 
+became more stable and the existing wait dependency was used correctly. Second, I refactored ProductServiceImpl from field injection 
+to constructor injection, made the dependency final, and added a null check to improve immutability, explicit dependencies, and testability. 
+Third, in ci.yml I replaced gradle/actions/setup-gradle@v3 with a full commit SHA to reduce supply-chain risk from mutable tags. 
+Fourth, in build.gradle.kts I removed hardcoded dependency versions where Spring dependency management already provides managed versions. 
+Finally, I enabled Gradle dependency verification by adding gradle/verification-metadata.xml and gradle/verification-keyring.keys. 
+
+My strategy was to prioritize issues by risk and maintainability: fix security-sensitive configuration first, then structural code quality issues, 
+then consistency/build hygiene issues. I kept each change minimal and localized, aligned with existing project patterns, and verified changes by 
+running Gradle tests after each significant update.
+
+2. CI/CD evaluation
+
+The current GitHub Actions setup has met the core definition of Continuous Integration because every push and pull request triggers automated 
+build and test execution, and it also runs SonarCloud analysis to continuously check code quality. This gives fast feedback and enforces integration 
+checks on shared code, which is a key characteristic of CI. However, it has not yet met the definition of Continuous Deployment because there is no 
+automated deployment stage that releases successful builds to a production environment. There is also no release promotion pipeline (for example 
+dev -> staging -> production) or post-deploy verification in the current workflow. So, the repository currently implements CI well, but CD still 
+needs to be added.
+```
