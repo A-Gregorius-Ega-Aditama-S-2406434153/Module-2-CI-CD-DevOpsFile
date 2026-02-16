@@ -113,14 +113,17 @@ Finally, I enabled Gradle dependency verification by adding gradle/verification-
 
 My strategy was to prioritize issues by risk and maintainability: fix security-sensitive configuration first, then structural code quality issues, 
 then consistency/build hygiene issues. I kept each change minimal and localized, aligned with existing project patterns, and verified changes by 
-running Gradle tests after each significant update.
+running Gradle tests after each significant update. I also validated each fix with Sonar results so quality improvements were measurable, and the 
+project quality status improved from E to AD with no remaining issues.
 
 2. CI/CD evaluation
 
-The current GitHub Actions setup has met the core definition of Continuous Integration because every push and pull request triggers automated 
-build and test execution, and it also runs SonarCloud analysis to continuously check code quality. This gives fast feedback and enforces integration 
-checks on shared code, which is a key characteristic of CI. However, it has not yet met the definition of Continuous Deployment because there is no 
-automated deployment stage that releases successful builds to a production environment. There is also no release promotion pipeline (for example 
-dev -> staging -> production) or post-deploy verification in the current workflow. So, the repository currently implements CI well, but CD still 
-needs to be added.
+The current implementation has met the definition of Continuous Integration because every push and pull request triggers automated build and test execution, 
+and SonarCloud analysis is also executed to keep code quality checks continuous. In addition, this project already has Continuous Deployment through Koyeb 
+using the Dockerfile in the root directory, where deployment is handled as a containerized release pipeline. After code changes are integrated, the deployment 
+is propagated to the running application environment on Koyeb, so updates are delivered continuously without manual server-side steps in this repository. 
+This setup gives a clear CI to CD flow: code integration, automated verification, container build, and live deployment to one running service. 
+Using Docker also helps keep runtime behavior consistent between local build and cloud deployment because the same container definition is used. 
+To strengthen this further, it is still good to keep branch protection and post-deploy smoke checks so each automatic release is both fast and safe. 
+The deployed application is accessible at: https://determined-allissa-a-gregorius-ega-sditama-s-240643415-86f9fa9c.koyeb.app/product/list
 ```
