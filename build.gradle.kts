@@ -60,25 +60,32 @@ tasks.withType<Test>().configureEach {
 val sonarHostUrlProvider = providers.gradleProperty("sonarHostUrl")
     .orElse(providers.environmentVariable("SONAR_HOST_URL"))
     .orElse("https://sonarcloud.io")
+
+val githubRepositoryProvider = providers.environmentVariable("GITHUB_REPOSITORY")
+
 val sonarProjectKeyProvider = providers.gradleProperty("sonarProjectKey")
-    .orElse(providers.environmentVariable("A-Gregorius-Ega-Aditama-S-2406434153_Module-2-CI-CD-DevOpsFile"))
+    .orElse(providers.environmentVariable("SONAR_PROJECT_KEY"))
+    .orElse(githubRepositoryProvider.map { it.replace("/", "_") })
+    .orElse("undefined_project_key")
+
 val sonarOrganizationProvider = providers.gradleProperty("sonarOrganization")
-    .orElse(providers.environmentVariable("a-gregorius-ega-aditama-s-2406434153"))
+    .orElse(providers.environmentVariable("SONAR_ORGANIZATION"))
+    .orElse(githubRepositoryProvider.map { it.substringBefore("/") })
+    .orElse("undefined_org")
+
 val sonarTokenProvider = providers.gradleProperty("sonarToken")
     .orElse(providers.environmentVariable("SONAR_TOKEN"))
-val githubRepositoryProvider = providers.environmentVariable("GITHUB_REPOSITORY")
+    .orElse("")
+
 val nvdApiKeyProvider = providers.environmentVariable("NVD_API_KEY")
+
 
 sonar {
     properties {
-        val githubRepository = githubRepositoryProvider.orNull
-        val derivedProjectKey = githubRepository?.replace("/", "_")
-        val derivedOrganization = githubRepository?.substringBefore("/")
-
-        val sonarProjectKey = sonarProjectKeyProvider.orNull ?: derivedProjectKey
-        val sonarOrganization = sonarOrganizationProvider.orNull ?: derivedOrganization
-
         property("sonar.host.url", sonarHostUrlProvider.get())
+        property("sonar.projectKey", sonarProjectKeyProvider.get())
+        property("sonar.organization", sonarOrganizationProvider.get())
+        property("sonar.token", sonarTokenProvider.get())
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
             layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath
@@ -87,16 +94,6 @@ sonar {
             "sonar.junit.reportPaths",
             layout.buildDirectory.dir("test-results/test").get().asFile.absolutePath
         )
-
-        if (!sonarProjectKey.isNullOrBlank()) {
-            property("sonar.projectKey", sonarProjectKey)
-        }
-        if (!sonarOrganization.isNullOrBlank()) {
-            property("sonar.organization", sonarOrganization)
-        }
-        if (!sonarTokenProvider.orNull.isNullOrBlank()) {
-            property("sonar.token", sonarTokenProvider.get())
-        }
     }
 }
 
