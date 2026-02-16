@@ -96,6 +96,14 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.test{
+    filter{
+        excludeTestsMatching("*FunctionalTest")
+    }
+    finalizedBy(tasks.jacocoTestReport)
+
+}
+
 tasks.register<JacocoReport>("jacocoUnitTestReport") {
     description = "Generates Jacoco coverage report for unit tests."
     group = "verification"
