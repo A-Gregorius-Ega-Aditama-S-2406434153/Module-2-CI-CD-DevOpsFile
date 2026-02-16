@@ -1,0 +1,13 @@
+.git
+.github
+.gradle
+.idea
+build
+out
+*.log
+depcheck.log
+runtime_deps.txt
+test_runtime_deps.txt
+osv_vuln_summary.txt
+osv_vuln_summary_after.txt
+osv_vuln_details_after.json

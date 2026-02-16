@@ -1,0 +1,12 @@
+[
+    {
+        "Dependency":  "org.apache.commons:commons-lang3:3.17.0",
+        "Id":  "GHSA-j288-q9x7-2f5v",
+        "Summary":  null
+    },
+    {
+        "Dependency":  "org.assertj:assertj-core:3.27.6",
+        "Id":  "GHSA-rqfh-9r24-8c9r",
+        "Summary":  null
+    }
+]

@@ -1,0 +1,2 @@
+@{Dependency=org.assertj:assertj-core:3.27.6; VulnCount=1; VulnIds=GHSA-rqfh-9r24-8c9r}
+@{Dependency=org.apache.commons:commons-lang3:3.17.0; VulnCount=1; VulnIds=GHSA-j288-q9x7-2f5v}

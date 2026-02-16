@@ -1,0 +1,5 @@
+
+> Task :dependencyCheckAnalyze
+Verifying dependencies for project eshop
+Checking for updates and analyzing dependencies for vulnerabilities
+An NVD API Key was not provided - it is highly recommended to use an NVD API key as the update can take a VERY long time without an API Key
