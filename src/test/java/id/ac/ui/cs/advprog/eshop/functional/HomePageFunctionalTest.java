@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -86,6 +87,7 @@ class HomePageFunctionalTest {
     void pageTitle_isCorrect() {
         // Exercise
         driver.get(baseUrl);
+        wait.until(ExpectedConditions.titleIs("ADV Shop"));
         String pageTitle = driver.getTitle();
 
         // Verify
@@ -96,7 +98,9 @@ class HomePageFunctionalTest {
     void welcomeMessage_homePage_isCorrect() {
         // Exercise
         driver.get(baseUrl);
-        String welcomeMessage = driver.findElement(By.tagName("h3")).getText();
+        String welcomeMessage = wait
+                .until(ExpectedConditions.visibilityOfElementLocated(By.tagName("h3")))
+                .getText();
 
         // Verify
         assertEquals("Welcome", welcomeMessage);
