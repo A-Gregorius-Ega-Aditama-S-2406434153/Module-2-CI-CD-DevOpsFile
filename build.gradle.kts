@@ -3,8 +3,10 @@
 
 plugins {
     java
-    id("org.springframework.boot") version "3.2.2"
+    id("org.springframework.boot") version "3.5.10"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.sonarqube") version "7.1.0.6387"
+    id("org.owasp.dependencycheck") version "12.2.0"
     jacoco
 }
 
@@ -24,9 +26,9 @@ configurations {
     }
 }
 
-val seleniumJavaVersion = "4.14.1"
-val seleniumJupiterVersion = "5.0.1"
-val webdrivermanagerVersion = "5.6.3"
+val seleniumJavaVersion = "4.40.0"
+val seleniumJupiterVersion = "6.3.1"
+val webdrivermanagerVersion = "6.3.3"
 
 repositories {
     mavenCentral()
@@ -43,14 +45,61 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("org.apache.commons:commons-lang3")
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
     testImplementation("io.github.bonigarcia:webdrivermanager:$webdrivermanagerVersion")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+val sonarHostUrlProvider = providers.gradleProperty("sonarHostUrl")
+    .orElse(providers.environmentVariable("SONAR_HOST_URL"))
+    .orElse("https://sonarcloud.io")
+
+val githubRepositoryProvider = providers.environmentVariable("GITHUB_REPOSITORY")
+
+val sonarProjectKeyProvider = providers.gradleProperty("sonarProjectKey")
+    .orElse(providers.environmentVariable("SONAR_PROJECT_KEY"))
+    .orElse("A-Gregorius-Ega-Aditama-S-2406434153_Module-2-CI-CD-DevOpsFile")
+
+val sonarOrganizationProvider = providers.gradleProperty("sonarOrganization")
+    .orElse(providers.environmentVariable("SONAR_ORGANIZATION"))
+    .orElse("a-gregorius-ega-aditama-s-2406434153")
+
+val sonarTokenProvider = providers.gradleProperty("sonarToken")
+    .orElse(providers.environmentVariable("SONAR_TOKEN"))
+    .orElse("")
+
+val nvdApiKeyProvider = providers.environmentVariable("NVD_API_KEY")
+
+
+sonar {
+    properties {
+        property("sonar.host.url", sonarHostUrlProvider.get())
+        property("sonar.projectKey", sonarProjectKeyProvider.get())
+        property("sonar.organization", sonarOrganizationProvider.get())
+        property("sonar.token", sonarTokenProvider.get())
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath
+        )
+        property(
+            "sonar.junit.reportPaths",
+            layout.buildDirectory.dir("test-results/test").get().asFile.absolutePath
+        )
+    }
+}
+
+dependencyCheck {
+    formats = listOf("HTML", "JSON")
+    scanConfigurations = listOf("runtimeClasspath", "testRuntimeClasspath")
+    failBuildOnCVSS = 11.0F
+    nvd.apiKey = nvdApiKeyProvider.orNull
 }
 
 
@@ -96,12 +145,8 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.test{
-    filter{
-        excludeTestsMatching("*FunctionalTest")
-    }
-    finalizedBy(tasks.jacocoTestReport)
-
+tasks.matching { it.name == "sonar" || it.name == "sonarqube" }.configureEach {
+    dependsOn(tasks.test, tasks.jacocoTestReport)
 }
 
 tasks.register<JacocoReport>("jacocoUnitTestReport") {
@@ -109,7 +154,7 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
     group = "verification"
     dependsOn(tasks.named("unitTest"))
 
-    executionData.setFrom(fileTree(buildDir).include("jacoco/unitTest.exec"))
+    executionData.setFrom(fileTree(layout.buildDirectory).include("jacoco/unitTest.exec"))
     sourceSets(sourceSets["main"])
 
     reports {

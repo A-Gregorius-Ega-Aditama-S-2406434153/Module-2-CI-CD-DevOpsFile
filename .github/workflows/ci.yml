@@ -1,25 +1,35 @@
-name: Continous Integration (CI)
+name: Continuous Integration
 
 on:
   push:
   pull_request:
 
 jobs:
-  test:
-    name: Run Test
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Check out the Git repository
-        uses: actions/checkout@v4
-      - name: Set up Java toolchain
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
-          java-version: "21"
-          cache: "gradle"
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Make Gradle wrapper executable
+      - name: Cache Gradle
+        uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70
+
+      - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Run unit Test
-        run: ./gradlew test
+      - name: Build & Test
+        run: ./gradlew build
+
+      - name: SonarCloud Scan
+        run: ./gradlew sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: A-Gregorius-Ega-Aditama-S-2406434153_Module-2-CI-CD-DevOpsFile
+          SONAR_ORGANIZATION: a-gregorius-ega-aditama-s-2406434153
+          SONAR_HOST_URL: https://sonarcloud.io

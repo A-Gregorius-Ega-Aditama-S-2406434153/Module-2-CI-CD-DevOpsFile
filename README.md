@@ -89,3 +89,41 @@ more expressive, and easier to understand. This separation of concerns makes tes
 ince updates to element selectors or interaction logic are confined to page objects rather than scattered throughout test code.
 Overall, these practices lead to cleaner, more maintainable, and more scalable test suites.
 ```
+
+## Reflection 3:
+```text
+1. List the code quality issue(s) that you fixed during the exercise and explain your strategy
+on fixing them.
+2. Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current
+implementation has met the definition of Continuous Integration and Continuous
+Deployment? Explain the reasons (minimum 3 sentences)!
+```
+
+## Answer reflection 3:
+```text
+1. Code quality issues fixed and strategy
+
+During this exercise, I fixed several code quality and security-related issues identified by static analysis and workflow review. 
+First, I resolved an unused field issue in HomePageFunctionalTest by using WebDriverWait with ExpectedConditions, so the test 
+became more stable and the existing wait dependency was used correctly. Second, I refactored ProductServiceImpl from field injection 
+to constructor injection, made the dependency final, and added a null check to improve immutability, explicit dependencies, and testability. 
+Third, in ci.yml I replaced gradle/actions/setup-gradle@v3 with a full commit SHA to reduce supply-chain risk from mutable tags. 
+Fourth, in build.gradle.kts I removed hardcoded dependency versions where Spring dependency management already provides managed versions. 
+Finally, I enabled Gradle dependency verification by adding gradle/verification-metadata.xml and gradle/verification-keyring.keys. 
+
+My strategy was to prioritize issues by risk and maintainability: fix security-sensitive configuration first, then structural code quality issues, 
+then consistency/build hygiene issues. I kept each change minimal and localized, aligned with existing project patterns, and verified changes by 
+running Gradle tests after each significant update. I also validated each fix with Sonar results so quality improvements were measurable, and the 
+project quality status improved from E to AD with no remaining issues.
+
+2. CI/CD evaluation
+
+The current implementation has met the definition of Continuous Integration because every push and pull request triggers automated build and test execution, 
+and SonarCloud analysis is also executed to keep code quality checks continuous. In addition, this project already has Continuous Deployment through Koyeb 
+using the Dockerfile in the root directory, where deployment is handled as a containerized release pipeline. After code changes are integrated, the deployment 
+is propagated to the running application environment on Koyeb, so updates are delivered continuously without manual server-side steps in this repository. 
+This setup gives a clear CI to CD flow: code integration, automated verification, container build, and live deployment to one running service. 
+Using Docker also helps keep runtime behavior consistent between local build and cloud deployment because the same container definition is used. 
+To strengthen this further, it is still good to keep branch protection and post-deploy smoke checks so each automatic release is both fast and safe. 
+The deployed application is accessible at: https://determined-allissa-a-gregorius-ega-sditama-s-240643415-86f9fa9c.koyeb.app/product/list
+```

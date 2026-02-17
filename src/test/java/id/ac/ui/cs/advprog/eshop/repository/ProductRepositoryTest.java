@@ -89,6 +89,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void testFindByIdWhenNotMatchedInNonEmptyRepository() {
+        Product product = buildProduct(
+                "existing-id",
+                "Sampo Cap Merak",
+                7
+        );
+        productRepository.create(product);
+
+        Product foundProduct = productRepository.findById("missing-id");
+        assertNull(foundProduct);
+    }
+
+    @Test
     void testFindByIdIgnoresNullProductId() {
         Product product = buildProduct(null, "Sampo Cap Kucing", 10);
         productRepository.create(product);
@@ -144,6 +157,30 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void testUpdateWhenMissingInNonEmptyRepository() {
+        Product existingProduct = buildProduct(
+                "existing-id",
+                "Sampo Cap Ular",
+                11
+        );
+        productRepository.create(existingProduct);
+
+        Product updatedProduct = buildProduct(
+                "missing-id",
+                "Sampo Cap Rajawali",
+                44
+        );
+
+        Product result = productRepository.update(updatedProduct);
+        assertNull(result);
+
+        Product persistedProduct = productRepository.findById("existing-id");
+        assertNotNull(persistedProduct);
+        assertEquals("Sampo Cap Ular", persistedProduct.getProductName());
+        assertEquals(11, persistedProduct.getProductQuantity());
+    }
+
+    @Test
     void testDeleteByIdWhenFound() {
         Product product = buildProduct(
                 "7ee058b6-5172-4e6f-b659-b7a10b5b3f46",
@@ -161,6 +198,20 @@ class ProductRepositoryTest {
     void testDeleteByIdWhenMissing() {
         boolean deleted = productRepository.deleteById("missing-id");
         assertFalse(deleted);
+    }
+
+    @Test
+    void testDeleteByIdWhenMissingInNonEmptyRepository() {
+        Product product = buildProduct(
+                "existing-id",
+                "Sampo Cap Elang",
+                18
+        );
+        productRepository.create(product);
+
+        boolean deleted = productRepository.deleteById("missing-id");
+        assertFalse(deleted);
+        assertNotNull(productRepository.findById("existing-id"));
     }
 
     @Test
