@@ -96,7 +96,7 @@ Overall, these practices lead to cleaner, more maintainable, and more scalable t
 on fixing them.
 2. Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current
 implementation has met the definition of Continuous Integration and Continuous
-Deployment? Explain the reasons (minimum 3 sentences)!
+Deployment? Explain the reasons (minimum 3 sentence)!
 ```
 
 ## Answer reflection 3:
