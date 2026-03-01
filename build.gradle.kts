@@ -45,6 +45,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.assertj:assertj-core")
     testImplementation("org.apache.commons:commons-lang3")
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")

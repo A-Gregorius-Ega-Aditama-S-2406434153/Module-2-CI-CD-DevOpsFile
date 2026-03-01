@@ -127,3 +127,74 @@ Using Docker also helps keep runtime behavior consistent between local build and
 To strengthen this further, it is still good to keep branch protection and post-deploy smoke checks so each automatic release is both fast and safe. 
 The deployed application is accessible at: https://determined-allissa-a-gregorius-ega-sditama-s-240643415-86f9fa9c.koyeb.app/product/list
 ```
+
+## Reflection 4:
+```text
+Apply the SOLID principles you have learned. You are allowed to modify the source code
+according to the principles you want to implement. Please answer the following questions:
+1) Explain what principles you apply to your project!
+2) Explain the advantages of applying SOLID principles to your project with examples.
+3) Explain the disadvantages of not applying SOLID principles to your project with examples.
+Please write the answer in the README.md file.
+```
+
+## Answer reflection 4:
+```text
+1) SOLID principles applied in this project
+
+I applied at least three SOLID principles in the Car feature:
+
+- SRP (Single Responsibility Principle):
+  Each layer now has one clear responsibility. `CarController` handles HTTP requests/response flow, `CarServiceImpl`
+  handles business rules (validation + ID generation + orchestration), and `InMemoryCarRepository` handles in-memory
+  persistence operations only.
+
+- DIP (Dependency Inversion Principle):
+  High-level modules depend on abstractions instead of concrete classes. `CarController` depends on `CarService`
+  (interface), and `CarServiceImpl` depends on `CarRepository` (interface), not concrete implementations.
+
+- OCP (Open/Closed Principle):
+  By introducing `CarRepository` interface and `InMemoryCarRepository`, the service/controller can stay unchanged
+  if later we add another repository implementation (for example file-based or database-backed storage).
+
+I also improved maintainability by using constructor injection instead of field injection in the refactored classes.
+
+2) Advantages of applying SOLID principles (with examples)
+
+- Easier maintenance:
+  Because responsibilities are separated, changes are localized. Example: if car validation rules change, we update
+  `CarServiceImpl` without touching repository storage logic or controller route handling.
+
+- Better testability:
+  DIP makes mocking straightforward. Example: `CarServiceImplTest` mocks `CarRepository`, and `CarControllerTest`
+  mocks `CarService`, so each class can be tested in isolation with focused assertions.
+
+- Lower coupling and safer evolution:
+  Example: replacing `InMemoryCarRepository` with another implementation would not require changing controller/service
+  code that already depends on `CarRepository` abstraction.
+
+- Clearer contracts and safer behavior:
+  Using `Optional` for not-found cases in car flow avoids null ambiguity and makes not-found handling explicit.
+  This reduces hidden NullPointerException risks and encourages explicit control flow in the controller.
+
+3) Disadvantages of not applying SOLID principles (with examples)
+
+- Tight coupling makes changes expensive:
+  If `CarController` directly depends on `CarServiceImpl`, a service implementation change can cascade into controller
+  updates and brittle tests.
+
+- Mixed responsibilities increase bug risk:
+  If repository and business rules are mixed, storage changes can accidentally break validation logic. Example:
+  combining ID generation, input validation, and data persistence in one class makes regressions more likely.
+
+- Harder to test and debug:
+  Without abstractions, tests require real dependencies and become slower/more fragile. Example: controller tests would
+  be harder to isolate without mocking a `CarService` interface.
+
+- Less extensible design:
+  Without OCP through interfaces, adding new storage mechanisms requires modifying existing working code instead of
+  extending with a new implementation, increasing regression risk.
+
+In summary, applying SRP, DIP, and OCP in this project made the code easier to reason about, easier to test,
+and safer to evolve while keeping existing user-facing behavior intact.
+```
