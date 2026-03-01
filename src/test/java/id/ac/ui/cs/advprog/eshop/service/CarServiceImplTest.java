@@ -66,6 +66,28 @@ class CarServiceImplTest {
     }
 
     @Test
+    void createRejectsNullCar() {
+        assertThrows(IllegalArgumentException.class, () -> carService.create(null));
+        verify(carRepository, never()).create(any(Car.class));
+    }
+
+    @Test
+    void createRejectsBlankCarName() {
+        Car car = buildCar(null, " ", "Gray", 1);
+
+        assertThrows(IllegalArgumentException.class, () -> carService.create(car));
+        verify(carRepository, never()).create(any(Car.class));
+    }
+
+    @Test
+    void createRejectsBlankCarColor() {
+        Car car = buildCar(null, "Honda Civic", " ", 1);
+
+        assertThrows(IllegalArgumentException.class, () -> carService.create(car));
+        verify(carRepository, never()).create(any(Car.class));
+    }
+
+    @Test
     void findAllReturnsListFromRepository() {
         Car first = buildCar("car-1", "Toyota", "Black", 10);
         Car second = buildCar("car-2", "Suzuki", "White", 20);
@@ -135,6 +157,14 @@ class CarServiceImplTest {
         Car updatedCar = buildCar("car-in-body", "Audi", "Black", 2);
 
         assertThrows(IllegalArgumentException.class, () -> carService.update("car-in-path", updatedCar));
+        verify(carRepository, never()).update(any(String.class), any(Car.class));
+    }
+
+    @Test
+    void updateRejectsBlankPayloadCarId() {
+        Car updatedCar = buildCar(" ", "Audi", "Black", 2);
+
+        assertThrows(IllegalArgumentException.class, () -> carService.update("car-1", updatedCar));
         verify(carRepository, never()).update(any(String.class), any(Car.class));
     }
 

@@ -52,6 +52,15 @@ class InMemoryCarRepositoryTest {
     }
 
     @Test
+    void findByIdSkipsCarsWithNullId() {
+        repository.create(buildCar(null, "NoId", "Green", 1));
+
+        Optional<Car> found = repository.findById("some-id");
+
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
     void updateModifiesStoredInstance() {
         Car stored = buildCar("car-4", "BMW", "Blue", 3);
         repository.create(stored);
@@ -75,6 +84,16 @@ class InMemoryCarRepositoryTest {
     }
 
     @Test
+    void updateReturnsEmptyWhenStoredCarIdIsNull() {
+        repository.create(buildCar(null, "NoId", "Green", 1));
+        Car updated = buildCar("car-7", "Tesla", "White", 1);
+
+        Optional<Car> result = repository.update("car-7", updated);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     void deleteRemovesStoredCar() {
         Car car = buildCar("car-5", "Audi", "Red", 4);
         repository.create(car);
@@ -93,6 +112,16 @@ class InMemoryCarRepositoryTest {
 
         assertFalse(repository.findAll().isEmpty());
         assertEquals(1, repository.findAll().size());
+    }
+
+    @Test
+    void deleteWithNullIdIsNoOp() {
+        repository.create(buildCar("car-8", "Kia", "Black", 2));
+
+        repository.deleteById(null);
+
+        assertEquals(1, repository.findAll().size());
+        assertTrue(repository.findById("car-8").isPresent());
     }
 
     private Car buildCar(String id, String name, String color, int quantity) {

@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,6 +56,56 @@ class CarControllerTest {
     }
 
     @Test
+    void createCarPostRejectsBlankName() throws Exception {
+        mockMvc.perform(post("/car/createCar")
+                        .param("carName", " ")
+                        .param("carColor", "Black")
+                        .param("carQuantity", "5"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService, never()).create(any(Car.class));
+    }
+
+    @Test
+    void createCarPostRejectsBlankColor() throws Exception {
+        mockMvc.perform(post("/car/createCar")
+                        .param("carName", "Toyota")
+                        .param("carColor", " ")
+                        .param("carQuantity", "5"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService, never()).create(any(Car.class));
+    }
+
+    @Test
+    void createCarPostRejectsNegativeQuantity() throws Exception {
+        mockMvc.perform(post("/car/createCar")
+                        .param("carName", "Toyota")
+                        .param("carColor", "Black")
+                        .param("carQuantity", "-1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService, never()).create(any(Car.class));
+    }
+
+    @Test
+    void createCarPostRedirectsSafelyWhenServiceThrows() throws Exception {
+        doThrow(new IllegalArgumentException("invalid")).when(carService).create(any(Car.class));
+
+        mockMvc.perform(post("/car/createCar")
+                        .param("carName", "Toyota")
+                        .param("carColor", "Black")
+                        .param("carQuantity", "5"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService).create(any(Car.class));
+    }
+
+    @Test
     void carListPageReturnsCarListView() throws Exception {
         Car car = buildCar("car-2", "Honda", "White", 8);
         when(carService.findAll()).thenReturn(Collections.singletonList(car));
@@ -81,9 +132,47 @@ class CarControllerTest {
     }
 
     @Test
+    void editCarPageRedirectsWhenCarIdBlank() throws Exception {
+        mockMvc.perform(get("/car/editCar/{carId}", " "))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService, never()).findById(any(String.class));
+    }
+
+    @Test
     void postEditCarRedirectsToListCar() throws Exception {
         Car updatedCar = buildCar("car-4", "BMW", "Blue", 3);
         when(carService.update(eq("car-4"), any(Car.class))).thenReturn(Optional.of(updatedCar));
+
+        mockMvc.perform(post("/car/editCar")
+                        .param("carId", "car-4")
+                        .param("carName", "BMW")
+                        .param("carColor", "Blue")
+                        .param("carQuantity", "3"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService).update(eq("car-4"), any(Car.class));
+    }
+
+    @Test
+    void postEditCarRedirectsWhenPayloadInvalid() throws Exception {
+        mockMvc.perform(post("/car/editCar")
+                        .param("carId", " ")
+                        .param("carName", "BMW")
+                        .param("carColor", "Blue")
+                        .param("carQuantity", "3"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService, never()).update(any(String.class), any(Car.class));
+    }
+
+    @Test
+    void postEditCarRedirectsSafelyWhenServiceThrows() throws Exception {
+        doThrow(new IllegalArgumentException("invalid"))
+                .when(carService).update(eq("car-4"), any(Car.class));
 
         mockMvc.perform(post("/car/editCar")
                         .param("carId", "car-4")
@@ -114,6 +203,18 @@ class CarControllerTest {
                 .andExpect(view().name("redirect:listCar"));
 
         verify(carService, never()).deleteCarById(any(String.class));
+    }
+
+    @Test
+    void postDeleteCarRedirectsSafelyWhenServiceThrows() throws Exception {
+        doThrow(new IllegalArgumentException("invalid")).when(carService).deleteCarById("car-5");
+
+        mockMvc.perform(post("/car/deleteCar")
+                        .param("carId", "car-5"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:listCar"));
+
+        verify(carService).deleteCarById("car-5");
     }
 
     private Car buildCar(String id, String name, String color, int quantity) {
