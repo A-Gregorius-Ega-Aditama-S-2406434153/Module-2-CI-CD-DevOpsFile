@@ -19,6 +19,9 @@ import java.util.List;
 public class CarController {
 
     private static final String REDIRECT_CAR_LIST = "redirect:listCar";
+    private static final String VIEW_CREATE_CAR = "CreateCar";
+    private static final String VIEW_CAR_LIST = "CarList";
+    private static final String VIEW_EDIT_CAR = "EditCar";
 
     private final CarService carService;
 
@@ -29,7 +32,7 @@ public class CarController {
     @GetMapping("/createCar")
     public String createCarPage(Model model) {
         model.addAttribute("car", new Car());
-        return "createCar";
+        return VIEW_CREATE_CAR;
     }
 
     @PostMapping("/createCar")
@@ -50,7 +53,7 @@ public class CarController {
     public String carListPage(Model model) {
         List<Car> allCars = carService.findAll();
         model.addAttribute("cars", allCars);
-        return "carList";
+        return VIEW_CAR_LIST;
     }
 
     @GetMapping("/editCar/{carId}")
@@ -62,7 +65,7 @@ public class CarController {
         return carService.findById(carId)
                 .map(car -> {
                     model.addAttribute("car", car);
-                    return "editCar";
+                    return VIEW_EDIT_CAR;
                 })
                 .orElse(REDIRECT_CAR_LIST);
     }

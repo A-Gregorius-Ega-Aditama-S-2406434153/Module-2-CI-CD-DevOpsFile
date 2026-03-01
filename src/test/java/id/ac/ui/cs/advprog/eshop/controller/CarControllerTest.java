@@ -35,7 +35,7 @@ class CarControllerTest {
     void createCarPageReturnsCreateCarView() throws Exception {
         mockMvc.perform(get("/car/createCar"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("createCar"))
+                .andExpect(view().name("CreateCar"))
                 .andExpect(model().attributeExists("car"));
     }
 
@@ -61,7 +61,7 @@ class CarControllerTest {
 
         mockMvc.perform(get("/car/listCar"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("carList"))
+                .andExpect(view().name("CarList"))
                 .andExpect(model().attributeExists("cars"));
 
         verify(carService).findAll();
@@ -74,7 +74,7 @@ class CarControllerTest {
 
         mockMvc.perform(get("/car/editCar/{carId}", "car-3"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("editCar"))
+                .andExpect(view().name("EditCar"))
                 .andExpect(model().attribute("car", car));
 
         verify(carService).findById("car-3");
