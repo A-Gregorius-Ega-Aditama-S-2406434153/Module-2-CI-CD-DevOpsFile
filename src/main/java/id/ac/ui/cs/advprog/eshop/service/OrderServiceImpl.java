@@ -2,6 +2,7 @@ package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,11 +10,8 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderRepository orderRepository;
-
-    public OrderServiceImpl(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public Order createOrder(Order order) {
@@ -26,12 +24,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findById(String orderId) {
+    public List<Order> findAllByAuthor(String author) {
         return null;
     }
 
     @Override
-    public List<Order> findAllByAuthor(String author) {
+    public Order findById(String orderId) {
         return null;
     }
 }
